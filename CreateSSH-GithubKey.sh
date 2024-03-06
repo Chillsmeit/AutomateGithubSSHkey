@@ -102,7 +102,6 @@ else
     echo -e "\n${resetcolor}ssh keypair ${orange}$keyname${resetcolor} and ${orange}$keyname.pub${resetcolor} have been ${green}created${resetcolor}"
 fi
  
-
 # Create or overwrite SSH config file
 config_file="$ssh_folder/config"
 if [ -e "$config_file" ]; then
