@@ -141,7 +141,7 @@ EOF
     echo -e "\n${green}Config file created!${resetcolor}"
 fi
 
-#Copy the public key to clipboard
+# Copy the public key to clipboard
 if [ "$userOS" == "MacOS" ]; then
     pbcopy < "$ssh_folder/$keyname.pub"
     echo -e "${green}Public key copied to clipboard!"
