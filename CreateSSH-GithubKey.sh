@@ -1,14 +1,14 @@
 #!/bin/bash
 
 clear
-#Color codes
+# Color codes
 green='\e[32m'
 red='\e[38;5;196m'
 orange='\e[38;5;214m'
 lightgray='\033[00;37m'
 resetcolor='\e[0m'
 
-#Check da sudo
+# Check sudo
 if [[ $EUID -eq 0 ]]; then
 	messagecolor=$red
 	echo -e "${red}Please do not run this script as sudo!"
@@ -43,7 +43,7 @@ echo -e "${orange}####################"
 echo -e "${orange}# Checking system! #"
 echo -e "${orange}####################\n"
 
-#Wtf are you using?
+# What is your OS?
 OS=$(uname)
 userOS=""
 
@@ -58,7 +58,7 @@ else
     exit 1
 fi
 
-#Do you even ssh bruv?
+# Does ssh-keygen exist?
 if command -v ssh-keygen &> /dev/null; then
     echo -e "${orange}ssh-keygen${resetcolor} package is ${green}available\n${resetcolor}"
 else
@@ -67,15 +67,15 @@ else
     exit 1
 fi
 
-#Create da path if not exists
+# Create SSH path
 ssh_folder="$HOME/.ssh"
 if [ ! -d "$ssh_folder" ]; then
     echo -e "${resetcolor}Creating ${orange}$ssh_folder\n${resetcolor}"
     mkdir -p "$ssh_folder"
 fi
 
-keyname="git$userOS" #get dat keyname
-#Check if key already exists
+keyname="git$userOS" # get keyname based on the users OS
+# Check if key already exists
 if [ -e "$ssh_folder/$keyname" ]; then
     while true; do
 
@@ -96,14 +96,14 @@ if [ -e "$ssh_folder/$keyname" ]; then
 	    echo ""
 	fi
     done
-    #Create key if it doesn't exist
+    # Create the key if it doesn't exist
 else
     ssh-keygen -t rsa -f $ssh_folder/$keyname
     echo -e "\n${resetcolor}ssh keypair ${orange}$keyname${resetcolor} and ${orange}$keyname.pub${resetcolor} have been ${green}created${resetcolor}"
 fi
  
 
-#Create or overwrite da config file
+# Create or overwrite SSH config file
 config_file="$ssh_folder/config"
 if [ -e "$config_file" ]; then
     
