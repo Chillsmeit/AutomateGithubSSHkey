@@ -88,7 +88,7 @@ if [ -e "$ssh_folder/$keyname" ]; then
 	    sleep 1
 	    rm "$ssh_folder/$keyname" && rm "$ssh_folder/$keyname.pub"
 	    ssh-keygen -t rsa -f $ssh_folder/$keyname
-	    printf "\n${resetcolor}ssh keypair ${orange}$keyname${resetcolor} and ${orange}$keyname.pub${resetcolor} have been ${green}overwritten!${resetcolor}"
+	    printf "\n${resetcolor}ssh keypair ${orange}$keyname${resetcolor} and ${orange}$keyname.pub${resetcolor} have been ${green}overwritten${resetcolor}"
 	    break
 	elif answer_no "$answer_overwrite_key"; then
 	    printf "\n${red}Exiting..."
@@ -103,17 +103,13 @@ else
     printf "\n${resetcolor}ssh keypair ${orange}$keyname${resetcolor} and ${orange}$keyname.pub${resetcolor} have been ${green}created${resetcolor}"
 fi
  
-# Create or overwrite SSH config file
 config_file="$ssh_folder/config"
+# Check if the SSH config file exists
 if [ -e "$config_file" ]; then
-    
-    while true; do
-    
-	printf "\n${red}The config file already exists!\n${resetcolor}Do you want to overwrite it?"
-	read -p " Enter your choice (y/n): " answer_overwrite
-
-	if answer_yes "$answer_overwrite"; then
-	    cat << EOF > "$config_file"
+    # Check if the configuration block for github.com exists
+    if ! grep -q "^Host github.com$" "$config_file"; then
+        # Append the configuration block for github.com
+        cat << EOF >> "$config_file"
 Host github.com
 	User git
 	Hostname github.com
@@ -121,16 +117,13 @@ Host github.com
 	IdentityFile ~/.ssh/$keyname
 	IdentitiesOnly yes
 EOF
-	    printf "\n${green}Config file overwritten!${resetcolor}"
-	    break
-	elif answer_no "$answer_overwrite"; then
-	    printf "\n${red}Exiting..."
-	    exit 1
-	else
-	    echo ""
-	fi
-    done
+        printf "\n${green}Configuration block for github.com appended to the SSH config file.${resetcolor}"
+    else
+        printf "\n${red}The required configuration already exists in the SSH config file.${resetcolor}"
+    fi
 else
+    # Create a new SSH config file with the configuration block for github.com
+    mkdir -p "$ssh_folder"
     cat << EOF > "$config_file"
 Host github.com
 	User git
@@ -139,23 +132,23 @@ Host github.com
 	IdentityFile ~/.ssh/$keyname
 	IdentitiesOnly yes
 EOF
-    printf "\n${green}Config file created!${resetcolor}"
+    printf "\n${green}SSH config file created with configuration block for github.com.${resetcolor}"
 fi
 
 # Copy the public key to clipboard
 if [ "$userOS" == "MacOS" ]; then
     pbcopy < "$ssh_folder/$keyname.pub"
-    printf "${green}Public key copied to clipboard!"
+    printf "\n${green}Public key copied to clipboard!"
 else
     if command -v xclip &> /dev/null; then
         xclip -sel clip < "$ssh_folder/$keyname.pub"
-	printf "${green}Public key copied to clipboard!"
+	printf "\n${green}Public key copied to clipboard!"
     elif command -v xsel &> /dev/null; then
         xsel --clipboard < "$ssh_folder/$keyname.pub"
-	printf "${green}Public key copied to clipboard!"
+	printf "\n${green}Public key copied to clipboard!"
     else
         printf "${red}Neither xclip nor xsel found. Please install one of them."
         exit 1
     fi
 fi
-printf "\nGo to https://github.com/settings/profile -> SSH and GPG Keys\nChoose New SSH key and paste the .pub key contents in your clipboard"
+printf "\nGo to https://github.com/settings/profile -> SSH and GPG Keys\nChoose 'New SSH key' and paste the .pub key contents in your clipboard"
