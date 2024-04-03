@@ -1,4 +1,4 @@
-# Semi-Automate the process of generating SSH keys for Github
+# Semi-Automate generating SSH keys for Github (because I'm lazy)
 ### Unix based systems (MacOS and Linux)
 ### 1. Download the script:
 ```
